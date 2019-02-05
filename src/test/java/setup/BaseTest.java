@@ -1,9 +1,11 @@
 package setup;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
 import utils.Logger;
+import utils.Utilities;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -15,9 +17,12 @@ public class BaseTest {
     @BeforeSuite
     public void beforeSuite() throws IOException {
 
-
-
         Logger.setUpExtent();
+        //String chromePath = Utilities.getProperties("chromePath");
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\ramon\\IdeaProjects\\selenium-extentreportsdemo-java\\src\\test\\java\\drivers\\chromedriver.exe");
+
+        driver = new ChromeDriver();
+
     }
 
     @BeforeClass
@@ -42,14 +47,19 @@ public class BaseTest {
 
         Logger.createTest( testName,description,className);
 
+        driver.navigate().to("https://www.google.com.br");
+        driver.manage().window().fullscreen();
 
     }
 
 
 
+
     @AfterMethod
-    public void afterMethod(ITestResult result) {
-        Logger.addScreenshot(result);
+    public void afterMethod(ITestResult result) throws IOException {
+
+        Logger.addScreenshot(result, Utilities.takeScreenshot());
+        Logger.addScreenshotToBase64(result,Utilities.takeScreenshotToBase64());
     }
 
 
@@ -62,6 +72,9 @@ public class BaseTest {
     public void afterSuite() {
         Logger.generateReport();
     }
+
+
+
 }
 
 
